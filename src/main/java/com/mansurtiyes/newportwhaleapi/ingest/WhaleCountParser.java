@@ -1,6 +1,7 @@
 package com.mansurtiyes.newportwhaleapi.ingest;
 
 import com.mansurtiyes.newportwhaleapi.ingest.resolve.InMemorySpeciesResolver;
+import com.mansurtiyes.newportwhaleapi.ingest.resolve.TextNormalizer;
 import com.mansurtiyes.newportwhaleapi.model.ReportStatus;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,7 +10,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class WhaleCountParser implements HtmlParser {
@@ -18,6 +23,12 @@ public class WhaleCountParser implements HtmlParser {
 
     private static final DateTimeFormatter M_D_YYYY =
             DateTimeFormatter.ofPattern("M/d/yyyy");
+    // Split on commas that are followed by a digit (item separators), so we DON'T split "5,130"
+    private static final Pattern ITEM_SPLIT = Pattern.compile("(?<!\\d)\\s*,\\s*(?=\\d)");
+
+    // One item looks like: "<number with optional commas><space><species label>"
+    // e.g., "4 fin whales", "5,130 common dolphin"
+    private static final Pattern OBS_PATTERN = Pattern.compile("^([\\d,]+)\\s+(.+)$");
 
     public WhaleCountParser(InMemorySpeciesResolver speciesResolver) {
         this.speciesResolver = speciesResolver;
@@ -73,6 +84,55 @@ public class WhaleCountParser implements HtmlParser {
         return ReportStatus.ok;
     }
 
+    public List<ParsedObservation> parseObservations(String description) {
+        if (description == null) return List.of();
+
+        // normalize accents/dashes/quotes, collapse spaces, lowercase, trim
+        final String norm = TextNormalizer.norm(description);
+        if (norm.isBlank()) return List.of();
+
+        List<ParsedObservation> out = new ArrayList<>();
+
+        // split into chunks: "4 fin whales", "1 mola mola", "2855 common dolphin", ...
+        String[] parts = ITEM_SPLIT.split(norm);
+
+        for (String part : parts) {
+            if (part.isBlank()) continue;
+
+            Matcher m = OBS_PATTERN.matcher(part);
+            if (!m.matches()) {
+                // e.g., "bad weather" or malformed segment — skip
+                continue;
+            }
+
+            // 1) parse leading integer (allow thousands separators)
+            String countStr = m.group(1).replace(",", "");
+            final int individuals;
+            try {
+                individuals = Integer.parseInt(countStr);
+            } catch (NumberFormatException e) {
+                // bad number -> skip this chunk
+                continue;
+            }
+
+            // 2) remaining text is the species label
+            String label = m.group(2).trim();
+
+            // minor cleanup (rare trailing punctuation)
+            label = label.replaceAll("[\\p{Punct}]+$", "").trim();
+
+            // 3) resolve to speciesId via resolver (aliases are already accounted for)
+            Optional<String> speciesId = speciesResolver.resolve(label);
+            if (speciesId.isEmpty()) {
+                // couldn’t resolve; skip this chunk (or log if added later)
+                continue;
+            }
+
+            out.add(new ParsedObservation(speciesId.get(), individuals));
+        }
+
+        return out;
+    }
 
 
 }
