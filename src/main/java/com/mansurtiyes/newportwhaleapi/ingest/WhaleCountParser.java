@@ -1,6 +1,7 @@
 package com.mansurtiyes.newportwhaleapi.ingest;
 
 import com.mansurtiyes.newportwhaleapi.ingest.resolve.InMemorySpeciesResolver;
+import com.mansurtiyes.newportwhaleapi.model.ReportStatus;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
@@ -62,6 +63,16 @@ public class WhaleCountParser implements HtmlParser {
             throw new IllegalArgumentException("Unable to parse tours count: " + input, e);
         }
     }
+
+    // if description is "bad weather" -> returns ReportStatus.bad_weather
+    // otherwise returns ReportStatus.ok
+    public ReportStatus parseStatus(String description) {
+        if (description != null && description.trim().equalsIgnoreCase("Bad Weather")) {
+            return ReportStatus.bad_weather;
+        }
+        return ReportStatus.ok;
+    }
+
 
 
 }
