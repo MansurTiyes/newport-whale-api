@@ -5,6 +5,7 @@ import com.mansurtiyes.newportwhaleapi.ingest.resolve.TextNormalizer;
 import com.mansurtiyes.newportwhaleapi.model.ReportStatus;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -36,7 +37,46 @@ public class WhaleCountParser implements HtmlParser {
 
     @Override
     public List<ParsedReport> parse(Document doc, String sourceUrl) {
-        return List.of();
+        Element table = selectRecentCountsTable(doc);
+        if (table == null) return List.of();
+
+        List<ParsedReport> out = new ArrayList<>();
+
+        // Only real data rows (skip header rows with <th>)
+        for (Element row : table.select("tbody > tr:has(td)")) {
+            Elements tds = row.select("td");
+            if (tds.size() < 3) continue;
+
+            String dateText = tds.get(0).text();
+            String toursText = tds.get(1).text();
+            String details   = tds.get(2).text();
+
+            // Parse date & tours; if either fails, skip this row
+            final LocalDate date;
+            final Integer tours;
+            try {
+                date  = parseDate(dateText);
+                tours = parseTours(toursText);
+            } catch (IllegalArgumentException ex) {
+                continue;
+            }
+
+            // 1) Bad weather handling
+            ReportStatus status = parseStatus(details);
+            if (status == ReportStatus.bad_weather) {
+                out.add(new ParsedReport(date, tours, status, List.of(), sourceUrl));
+                continue;
+            }
+
+            // 2) Parse observations from details
+            List<ParsedObservation> observations = parseObservations(details);
+
+            // 3) Add report
+            out.add(new ParsedReport(date, tours, ReportStatus.ok, observations, sourceUrl));
+
+        }
+
+        return out;
     }
 
     // given a Document, find and returns a table element from Newport whale count page
