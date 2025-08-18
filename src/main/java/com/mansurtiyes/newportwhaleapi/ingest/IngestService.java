@@ -1,5 +1,6 @@
 package com.mansurtiyes.newportwhaleapi.ingest;
 
+import com.mansurtiyes.newportwhaleapi.ingest.resolve.InMemorySpeciesResolver;
 import com.mansurtiyes.newportwhaleapi.model.DailyReport;
 import com.mansurtiyes.newportwhaleapi.model.ReportStatus;
 import com.mansurtiyes.newportwhaleapi.repository.DailyReportRepository;
@@ -31,12 +32,14 @@ public class IngestService implements CommandLineRunner {
     private final ObservationRepository observationRepo;
     private final HtmlFetcher fetcher;
     private final WhaleCountParser parser;
+    private final InMemorySpeciesResolver speciesResolver;
 
-    public IngestService(DailyReportRepository dailyReportRepo, ObservationRepository observationRepo, HtmlFetcher fetcher, WhaleCountParser parser) {
+    public IngestService(DailyReportRepository dailyReportRepo, ObservationRepository observationRepo, HtmlFetcher fetcher, WhaleCountParser parser, InMemorySpeciesResolver speciesResolver) {
         this.dailyReportRepo = dailyReportRepo;
         this.observationRepo = observationRepo;
         this.fetcher = fetcher;
         this.parser = parser;
+        this.speciesResolver = speciesResolver;
     }
 
     /**
@@ -83,6 +86,9 @@ public class IngestService implements CommandLineRunner {
      */
     @Transactional
     public void ingest(URI uri) throws Exception {
+        // Ensure aliases are present (idempotent)
+        speciesResolver.reload();  // ⬅ critical line
+
         // 1) Fetch & parse
         Document doc = fetcher.fetch(uri);
         List<ParsedReport> parsed = parser.parse(doc, uri.toString());
