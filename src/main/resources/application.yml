@@ -12,3 +12,8 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+logging:
+  level:
+    root: INFO
+    com.mansurtiyes: DEBUG   # your app’s package
