@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -98,12 +99,12 @@ public class SpeciesReadRepositoryImpl implements SpeciesReadRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         // group param: pass lowercase string for CAST(:group AS sighting_group), or null
-        params.addValue("group", group != null ? group.name() : null);
+        params.addValue("group", group != null ? group.name() : null, Types.VARCHAR);
 
         // search param
         String q = (search != null && !search.isBlank()) ? search.trim() : null;
-        params.addValue("q", q);
-        params.addValue("like", q != null ? "%" + q + "%" : null);
+        params.addValue("q", q, Types.VARCHAR);
+        params.addValue("like", q != null ? "%" + q + "%" : null,  Types.VARCHAR);
 
         // count first for pagination (can't return null, can ignore warning)
         long total = jdbc.queryForObject(COUNT_SQL, params, Long.class);
@@ -126,8 +127,8 @@ public class SpeciesReadRepositoryImpl implements SpeciesReadRepository {
                                                     @Nullable LocalDate end) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", Objects.requireNonNull(id, "id"));
-        params.addValue("start", start);
-        params.addValue("end", end);
+        params.addValue("start", start, Types.DATE);
+        params.addValue("end", end, Types.DATE);
 
         try {
             SpeciesDTO dto = jdbc.queryForObject(BY_ID_SQL, params, new SpeciesRowMapper());
