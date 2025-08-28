@@ -18,6 +18,15 @@ public class ReportDTO {
     public ReportDTO() {
     }
 
+    public ReportDTO(LocalDate date, int tours, List<ObservationDto> observations, ReportStatus status, String sourceUrl, OffsetDateTime fetchedAt) {
+        this.date = date;
+        this.tours = tours;
+        this.observations = observations;
+        this.status = status;
+        this.sourceUrl = sourceUrl;
+        this.fetchedAt = fetchedAt;
+    }
+
     public LocalDate getDate() {
         return date;
     }
