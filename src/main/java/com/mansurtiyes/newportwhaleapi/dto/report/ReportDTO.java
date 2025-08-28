@@ -3,6 +3,7 @@ package com.mansurtiyes.newportwhaleapi.dto.report;
 import com.mansurtiyes.newportwhaleapi.model.ReportStatus;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class ReportDTO {
@@ -11,17 +12,10 @@ public class ReportDTO {
     private int tours;
     private List<ObservationDto> observations;
     private ReportStatus status;
-    private SourceDto source;
+    private String sourceUrl;
+    private OffsetDateTime fetchedAt;
 
     public ReportDTO() {
-    }
-
-    public ReportDTO(LocalDate date, int tours, List<ObservationDto> observations, ReportStatus status, SourceDto source) {
-        this.date = date;
-        this.tours = tours;
-        this.observations = observations;
-        this.status = status;
-        this.source = source;
     }
 
     public LocalDate getDate() {
@@ -56,11 +50,19 @@ public class ReportDTO {
         this.status = status;
     }
 
-    public SourceDto getSource() {
-        return source;
+    public String getSourceUrl() {
+        return sourceUrl;
     }
 
-    public void setSource(SourceDto source) {
-        this.source = source;
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
+    }
+
+    public OffsetDateTime getFetchedAt() {
+        return fetchedAt;
+    }
+
+    public void setFetchedAt(OffsetDateTime fetchedAt) {
+        this.fetchedAt = fetchedAt;
     }
 }
