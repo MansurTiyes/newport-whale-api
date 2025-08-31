@@ -2,9 +2,9 @@ spring:
   config:
     import: optional:classpath:application-local.yml
   datasource:
-    url: jdbc:postgresql://localhost:5432/newport-whale
-    username: ${DB_USER:}
-    password: ${DB_PASS:}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/newport-whale}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USER:}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASS:}}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,3 +17,7 @@ logging:
   level:
     root: INFO
     com.mansurtiyes: DEBUG   # your app’s package
+
+# <-- add this block at root level
+server:
+  port: ${PORT:8080}
