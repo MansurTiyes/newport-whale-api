@@ -45,7 +45,7 @@ The **Newport Whale API** is a Spring Boot 3 REST service that transforms the pu
 
 ---
 
-# 1. Quickstart
+# Quickstart
 
 This section shows how to call the API in minutes using popular languages and tools.
 
@@ -58,7 +58,7 @@ All endpoints extend from the base, e.g.
 
 Responses are JSON. Dates use **ISO `YYYY-MM-DD`**.
 
-## 1.1. "Hello, API" (curl)
+## 1) "Hello, API" (curl)
 
 List a few species and their rollups:
 
@@ -78,9 +78,10 @@ Fetch a single day:
 curl -s 'https://newport-whale-api.onrender.com/api/v1/reports/2025-08-12'
 ```
 
-## 1.2. JavaScript (Browser fetch)
+## 2) JavaScript (Browser fetch)
 
-Works in Node 18+ (native `fetch`) and modern browsers. If you see a CORS error in the browser, call the API from your backend or ensure your origin is allowed.
+> [!WARNING]
+> Works in Node 18+ (native `fetch`) and modern browsers. If you see a CORS error in the browser, call the API from your backend or ensure your origin is allowed.
 
 ```html
 <script>
@@ -110,8 +111,6 @@ Works in Node 18+ (native `fetch`) and modern browsers. If you see a CORS error 
 ```
 
 ## 3) Node.js (Axios)
-
-*typescript*
 
 ```ts
 import axios from 'axios';
@@ -217,7 +216,7 @@ Task {
 
 # Core Data Model & Concepts
 
-This section introduces the objects, IDs, and enums youʼll see in responses and use in requests.
+This section introduces the **objects**, **IDs**, and **enums** youʼll see in responses and use in requests.
 
 ## Entities & relationships
 
@@ -225,17 +224,17 @@ This section introduces the objects, IDs, and enums youʼll see in responses and
 
 A canonical catalog entry for an animal you may see in reports.
 
-* `id` (string, slug) — stable identifier (e.g., `humpback-whale`, `blue-whale`).
+* `id` (*string*, *slug*) — stable identifier (e.g., `humpback-whale`, `blue-whale`).
   Use this in filters: `?speciesId=humpback-whale`.
   For all possible `species-id`, please reference **Appendix B**.
-* `group` (enum) — one of: `whale | dolphin | shark | fish | other`.
+* `group` (*enum*) — one of: `whale | dolphin | shark | fish | other`.
   For what each group entails, please reference **Appendix A**.
-* `commonName` (string) — e.g., “Humpback whale”.
-* `binomialName` (string) — scientific name.
-* `aliases` (string\[]) — alternative labels the scraper recognizes (e.g., “humpbacks”, “killer whale”).
-* `firstSeen` / `lastSeen` (date, ISO) — earliest/latest date we have observations for that species.
-* `totalReports` (number) — count of days in which the species appears.
-* `totalIndividuals` (number) — sum of individuals across those days.
+* `commonName` (*string*) — e.g., “Humpback whale”.
+* `binomialName` (*string*) — scientific name.
+* `aliases` (*string\[]*) — alternative labels the scraper recognizes (e.g., “humpbacks”, “killer whale”).
+* `firstSeen` / `lastSeen` (*date, ISO*) — earliest/latest date we have observations for that species.
+* `totalReports` (*number*) — count of days in which the species appears.
+* `totalIndividuals` (*number*) — sum of individuals across those days.
 
 **Sample**
 
@@ -297,7 +296,7 @@ A per-species tally within a day.
 { "speciesId": "blue-whale", "count": 2 }
 ```
 
-## Semantics
+**Semantics**
 
 * Counts represent the operatorʼs day-level tallies; they are not guaranteed to be unique individuals across the whole day—treat them as the official per-day totals as published.
 * On `bad_weather` days, `observations` are always empty by design.
@@ -314,11 +313,11 @@ Input is case-insensitive. `bad_weather` rows have `tours ≥ 0` but no `observa
 
 ## Identifiers & casing
 
-* `speciesId` is a stable slug; prefer values returned by `GET /api/v1/species`.
+* `speciesId` is a **stable slug**; prefer values returned by `GET /api/v1/species`.
   Example: `humpback-whale`, `white-shark`, `common-dolphin`.
-* Dates are ISO `YYYY-MM-DD` (no time).
+* **Dates** are ISO `YYYY-MM-DD` (no time).
 * When filtering with `start` / `end`, the window is inclusive.
-* Case handling: enum inputs (`group`, `status`) are case-insensitive; responses are canonical lowercase.
+* **Case handling**: enum inputs (`group`, `status`) are case-insensitive; responses are canonical lowercase.
 
 ---
 
@@ -326,10 +325,10 @@ Input is case-insensitive. `bad_weather` rows have `tours ≥ 0` but no `observa
 
 ## Versioning
 
-* Stable base path: `/api/v1/...`
+* **Stable base path**: `/api/v1/...`
 * Backwards-compatible changes may add optional fields or new endpoints.
-* Breaking changes (renamed/removed fields, semantics) will bump the major version (`/api/v2`).
-* Deprecations (if any) will be announced in the README and response headers.
+* **Breaking changes** (renamed/removed fields, semantics) will bump the major version (`/api/v2`).
+* **Deprecations** (if any) will be announced in the README and response headers.
 
 ## Pagination & sorting
 
@@ -367,7 +366,7 @@ All list endpoints return a **Spring Page**.
 
 **Sortable fields (whitelisted)**
 
-* **Reports (`GET /api/v1/reports`)**
+* **Reports** (`GET /api/v1/reports`)
 
     * `date` (maps to `daily_report.report_date`)
     * `tours`
@@ -375,24 +374,26 @@ All list endpoints return a **Spring Page**.
     * `fetchedAt`
       Default: `date,asc` (earliest → latest). You can override with `sort=date,desc`.
 
-* **Species list (`GET /api/v1/species`)**
-  Effective default: **`lastSeen desc NULLS LAST, id asc`**
-  (Surfaces active species first; stable tiebreaker by `id`.)
-  Additional explicit sorts may be added later.
+* **Species list** (`GET /api/v1/species`)
 
-> **Tip:** When building UIs, always pass an explicit `sort` so changes to defaults donʼt affect UX.
+    * **Effective default**: `lastSeen desc NULLS LAST, id asc`
+        (Surfaces active species first; stable tiebreaker by `id`.)
+    * Additional explicit sorts may be added later.
+
+> [!TIP]
+> When building UIs, always pass an explicit `sort` so changes to defaults donʼt affect UX.
 
 ## Dates & time zones
 
-* Date fields (`date`, `start`, `end`) use ISO-8601 calendar dates: `YYYY-MM-DD`.
-* Timestamps (`fetchedAt`) use ISO-8601 with offset (e.g., `2025-07-27T06:10:00Z`).
+* Date fields (`date`, `start`, `end`) use **ISO-8601** calendar dates: `YYYY-MM-DD`.
+* Timestamps (`fetchedAt`) use **ISO-8601** with offset (e.g., `2025-07-27T06:10:00Z`).
 
-## Source semantics
+**Source semantics**
 
 * Each `date` corresponds to the operatorʼs published calendar day.
 * Ingestion runs daily around **6:00 PM America/Los\_Angeles**; `fetchedAt` reflects crawl time.
 
-## Window semantics
+**Window semantics**
 
 * `start` and `end` are inclusive.
 * If both are omitted, the query covers all available data.
@@ -416,7 +417,7 @@ All list endpoints return a **Spring Page**.
 ## Common HTTP status codes
 
 * **400 Bad Request** – Your input is invalid.
-  **Examples:**
+  * Examples:
 
     * `start` / `end` window where `end < start`
     * `speciesId` and `group` provided together (mutually exclusive)
@@ -425,7 +426,7 @@ All list endpoints return a **Spring Page**.
     * Non-numeric paging (e.g., `?page=foo&size=-1`)
 
 * **404 Not Found** – The requested resource doesnʼt exist.
-  **Examples:**
+  * Examples:
 
     * `GET /api/v1/reports/2024-01-01` where no report exists for that date
     * `GET /api/v1/species/{id}` where `{id}` is unknown
@@ -441,12 +442,13 @@ All list endpoints return a **Spring Page**.
 * **429 Too Many Requests** – Not enabled right now (no rate limiting).
 
 * **500 Internal Server Error** – Unexpected server error.
-  Youʼll never see a stack trace; message is generic by design.
+    * Youʼll never see a stack trace; message is generic by design.
 
 * **503 Service Unavailable** – Temporary backend outage (e.g., database is unavailable).
-  Retry with backoff; keep requests idempotent.
+    * Retry with backoff; keep requests idempotent.
 
-> **Tip:** Treat **400/404** as non-retryable, **503** as retryable, and **500** as retryable with caution.
+>[!TIP]
+> Treat **400/404** as non-retryable, **503** as retryable, and **500** as retryable with caution.
 
 ## Error response schema
 
@@ -520,7 +522,8 @@ GET /api/v1/reports?group=whaless
 }
 ```
 
-*Note: Enum values are case-insensitive in practice, but unknown values are rejected.*
+> [!NOTE]
+> Enum values are case-insensitive in practice, but unknown values are rejected.
 
 **404 – Report date not found**
 
@@ -567,7 +570,7 @@ GET /api/v1/species
 
 This section is the contract for clients. It lists every public endpoint, parameters, validation rules, and concrete examples.
 
-Paging uses Spring Page format (see **Using API** section).
+Paging uses **Spring Page** format (see **Using API** section).
 
 For accepted enum/species values, see **Appendix — Catalogs**.
 
@@ -577,13 +580,13 @@ List species present in the dataset with derived rollups (first/last seen dates,
 
 ### Query parameters
 
-| Name     | Type   | Required | Notes                                                                                       |         |       |      |         |
-| -------- | ------ | -------- | ------------------------------------------------------------------------------------------- | ------- | ----- | ---- | ------- |
-| `group`  | enum   | no       | One of \`whale                                                                              | dolphin | shark | fish | other\` |
-| `search` | string | no       | Matches `id`, `commonName`, `binomialName`, and `aliases` (case-insensitive, normalized).   |         |       |      |         |
-| `page`   | int    | no       | 0-based. Default `0`.                                                                       |         |       |      |         |
-| `size`   | int    | no       | Default `20`. Reasonable max: `100`.                                                        |         |       |      |         |
-| `sort`   | string | no       | e.g. `sort=lastSeen,desc&sort=id,asc`. Default order is `lastSeen desc NULLS LAST, id asc`. |         |       |      |         |
+| Name     | Type   | Required | Notes                                                                                       |
+| -------- | ------ | -------- | ------------------------------------------------------------------------------------------- |
+| `group`  | enum   | no       | One of `whale, dolphin, shark, fish, other`.                                                |
+| `search` | string | no       | Matches `id`, `commonName`, `binomialName`, and `aliases` (case-insensitive, normalized).   |
+| `page`   | int    | no       | 0-based. Default `0`.                                                                       |
+| `size`   | int    | no       | Default `20`. Reasonable max: `100`.                                                        |
+| `sort`   | string | no       | e.g. `sort=lastSeen,desc&sort=id,asc`. Default order is `lastSeen desc NULLS LAST, id asc`. |
 
 ### Response (200)
 
@@ -626,9 +629,9 @@ curl -s 'https://newport-whale-api.onrender.com/api/v1/species?search=bottlenose
 
 ---
 
-## `GET /api/v1/species{id}`
+## `GET /api/v1/species/{id}`
 
-Details + rollups for a single species over an optional date window.
+Details + rollups for a single species over an **optional** date window.
 
 ### Path & query
 
@@ -676,22 +679,22 @@ Page through daily reports with presence/absence filters.
 
 ### Query parameters
 
-| Name           | Type    | Required | Notes                                                                                                                                                                                                          |         |       |      |          |
-| -------------- | ------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----- | ---- | -------- |
-| `start`        | date    | no       | ISO `YYYY-MM-DD` (inclusive).                                                                                                                                                                                  |         |       |      |          |
-| `end`          | date    | no       | ISO `YYYY-MM-DD` (inclusive). If both provided, `end ≥ start`.                                                                                                                                                 |         |       |      |          |
-| `speciesId`    | string  | no       | Only include days where this species appears. **Mutually exclusive** with `group`.                                                                                                                             |         |       |      |          |
-| `group`        | enum    | no       | One of \`whale                                                                                                                                                                                                 | dolphin | shark | fish | other\`. |
-| `hasSightings` | boolean | no       | With `group`: `true` → days **with** that group; `false` → days **without** that group. If `group` omitted applies to any `observations`. If `group` provided and `hasSightings` omitted → defaults to `true`. |         |       |      |          |
-| `status`       | enum    | no       | `ok` or `bad_weather`.                                                                                                                                                                                         |         |       |      |          |
-| `page`         | int     | no       | 0-based. Default `0`.                                                                                                                                                                                          |         |       |      |          |
-| `size`         | int     | no       | Default `20`.                                                                                                                                                                                                  |         |       |      |          |
-| `sort`         | string  | no       | Whitelisted fields (see **Using API** section).                                                                                                                                                                |         |       |      |          |
+| Name           | Type    | Required | Notes                                                                                                                                                                                                         |
+| -------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `start`        | date    | no       | ISO `YYYY-MM-DD` (inclusive).                                                                                                                                                                                 |
+| `end`          | date    | no       | ISO `YYYY-MM-DD` (inclusive). If both provided, `end ≥ start`.                                                                                                                                                |
+| `speciesId`    | string  | no       | Only include days where this species appears. **Mutually exclusive** with `group`.                                                                                                                            |
+| `group`        | enum    | no       | One of `whale, dolphin, shark, fish, other`.                                                                                                                                                                  |
+| `hasSightings` | boolean | no       | With `group`: `true` → days **with** that group; `false` → days **without** that group. If `group` omitted applies to any `observations`. If `group` provided and `hasSightings` omitted → defaults to `true`. |
+| `status`       | enum    | no       | `ok` or `bad_weather`.                                                                                                                                                                                        |
+| `page`         | int     | no       | 0-based. Default `0`.                                                                                                                                                                                         |
+| `size`         | int     | no       | Default `20`.                                                                                                                                                                                                 |
+| `sort`         | string  | no       | Whitelisted fields (see **Using API** section).                                                                                                                                                               |
 
 ### Validation
 
-* `speciesId` and `group` cannot be used together → **400 Bad Request**.
-* If both `start` and `end` are provided, `end` must be on/after `start`.
+* `speciesId` and `group` cannot be used together → `400 Bad Request`.
+* If both `start` and `end` are provided, `end` must be **on/after** `start`.
 
 ### Response (200)
 
@@ -796,7 +799,7 @@ Fetch the single daily report by date.
 
 ### Errors
 
-* **404 Not Found** if no report exists for that date.
+* `404 Not Found` if no report exists for that date.
 
 ### Examples
 
@@ -808,7 +811,7 @@ curl -s 'https://newport-whale-api.onrender.com/api/v1/reports/2025-07-26'
 
 # Appendix – Catalogs (Authoritative Lists)
 
-These are the canonical values accepted by the API and stored in the database. IDs are stable. Input for enums and aliases is case-insensitive (e.g., `?group=WhAle` is fine). To obtain the active set programmatically, prefer `GET /api/v1/species`.
+These are the **canonical values** accepted by the API and stored in the database. IDs are stable. Input for enums and aliases is **case-insensitive** (e.g., `?group=WhAle` is fine). To obtain the active set programmatically, prefer `GET /api/v1/species`.
 
 ## A. Sighting Groups
 
@@ -844,7 +847,8 @@ These are the canonical values accepted by the API and stored in the database. I
 | sunfish                     | fish    | Ocean sunfish               | *Mola mola*                  | sunfish, ocean sunfish, mola mola                                                                      |
 | false-killer-whale          | other   | False killer whale          | *Pseudorca crassidens*       | false killer whale, false-killer whale, false killer                                                   |
 
-**Why aliases matter:** the scraper normalizes text from the source site and resolves it through these aliases to the canonical `speciesId`. If you display user-facing names, prefer `commonName` from `/api/v1/species`.
+> [!NOTE]
+> **Why aliases matter:** the scraper normalizes text from the source site and resolves it through these aliases to the canonical `speciesId`. If you display user-facing names, prefer `commonName` from `/api/v1/species`.
 
 ## C. Report Statuses
 
