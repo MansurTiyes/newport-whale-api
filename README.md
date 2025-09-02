@@ -4,7 +4,7 @@ Spring Boot REST API serving Newport Beach whale‐sighting data via scheduled w
 
 # Overview
 
-The Newport Whale API is a Spring Boot 3 REST service that transforms the public sighting logs of Southern California's marine life, published at newportwhales.com, into clean, queryable JSON. A small crawler fetches the daily `whalecount.html` page, parses each row into domain records, and stores them in PostgreSQL so clients can filter, paginate, and analyze sightings without scraping.
+The **Newport Whale API** is a Spring Boot 3 REST service that transforms the public sighting logs of Southern California's marine life, published at [Newport Whale Sightings](newportwhales.com), into clean, queryable JSON. A small crawler fetches the daily `whalecount.html` page, parses each row into domain records, and stores them in PostgreSQL so clients can filter, paginate, and analyze sightings without scraping.
 
 ## Who this is for
 
@@ -45,7 +45,7 @@ The Newport Whale API is a Spring Boot 3 REST service that transforms the public
 
 ---
 
-# Quickstart
+# 1. Quickstart
 
 This section shows how to call the API in minutes using popular languages and tools.
 
@@ -58,7 +58,7 @@ All endpoints extend from the base, e.g.
 
 Responses are JSON. Dates use **ISO `YYYY-MM-DD`**.
 
-## 1) "Hello, API" (curl)
+## 1.1. "Hello, API" (curl)
 
 List a few species and their rollups:
 
@@ -78,7 +78,7 @@ Fetch a single day:
 curl -s 'https://newport-whale-api.onrender.com/api/v1/reports/2025-08-12'
 ```
 
-## 2) JavaScript (Browser fetch)
+## 1.2. JavaScript (Browser fetch)
 
 Works in Node 18+ (native `fetch`) and modern browsers. If you see a CORS error in the browser, call the API from your backend or ensure your origin is allowed.
 
