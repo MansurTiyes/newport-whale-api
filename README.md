@@ -226,7 +226,7 @@ A canonical catalog entry for an animal you may see in reports.
 
 * `id` (*string*, *slug*) — stable identifier (e.g., `humpback-whale`, `blue-whale`).
   Use this in filters: `?speciesId=humpback-whale`.
-  For all possible `species-id`, please reference **Appendix B**.
+  For all possible `species-id`, please reference [Appendix B](#b-species-catalog).
 * `group` (*enum*) — one of: `whale | dolphin | shark | fish | other`.
   For what each group entails, please reference **Appendix A**.
 * `commonName` (*string*) — e.g., “Humpback whale”.
