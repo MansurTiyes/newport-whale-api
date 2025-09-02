@@ -36,12 +36,44 @@ The **Newport Whale API** is a Spring Boot 3 REST service that transforms the pu
 
 # Table of Contents
 
-* [Quickstart](#quickstart)
-* [Core Data Model & Concepts](#core-data-model--concepts)
-* [Using the API](#using-the-api)
-* [Error Handling](#error-handling)
-* [Reference – Endpoints](#reference---endpoints)
-* [Appendix – Catalogs (Authoritative Lists)](#appendix---catalogs-authoritative-lists)
+- [Quickstart](#quickstart)
+  - [1) "Hello, API" (curl)](#1-hello-api-curl)
+  - [2) JavaScript (Browser fetch)](#2-javascript-browser-fetch)
+  - [3) Node.js (Axios)](#3-nodejs-axios)
+  - [4) Python (requests)](#4-python-requests)
+  - [5) Swift (iOS/macOS – URLSession + async/await)](#5-swfit-iosmacos--urlsession--asyncawait)
+
+- [Core Data Model & Concepts](#core-data-model--concepts)
+  - [Entities & relationships](#entities--relationships)
+    - [Species](#species)
+    - [DailyReport](#dailyreport)
+    - [Observation](#observation)
+  - [Enums](#enums)
+  - [Identifiers & casing](#identifiers--casing)
+
+- [Using the API](#using-the-api)
+  - [Versioning](#versioning)
+  - [Pagination & sorting](#pagination--sorting)
+  - [Dates & time zones](#dates--time-zones)
+  - [Authentication & rate limits](#authentication--rate-limits)
+  - [Practical Tips](#practical-tips)
+
+- [Error Handling](#error-handling)
+  - [Common HTTP status codes](#common-http-status-codes)
+  - [Error response schema](#error-response-schema)
+  - [Examples](#examples)
+  - [Client guidance](#client-guidance)
+
+- [Reference – Endpoints](#reference--endpoints)
+  - [`GET /api/v1/species`](#get-apiv1species)
+  - [`GET /api/v1/species/{id}`](#get-apiv1speciesid)
+  - [`GET /api/v1/reports`](#get-apiv1reports)
+  - [`GET /api/v1/reports/{date}`](#get-apiv1reportsdate)
+
+- [Appendix – Catalogs (Authoritative Lists)](#appendix--catalogs-authoritative-lists)
+  - [A. Sighting Groups](#a-sighting-groups)
+  - [B. Species Catalog](#b-species-catalog)
+  - [C. Report Statuses](#c-report-statuses)
 
 ---
 
