@@ -1,6 +1,18 @@
-# newport-whale-api
+<!-- Core project health -->
+[![Coverage](https://img.shields.io/badge/coverage-JaCoCo-informational)](#)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-Spring Boot REST API serving Newport Beach whale‐sighting data via scheduled web‐scrapes
+<!-- Runtime / stack -->
+![Java](https://img.shields.io/badge/Java-24%20%7C%2021-007396?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.x-6DB33F?logo=spring-boot)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql)
+![Flyway](https://img.shields.io/badge/Flyway-enabled-cc0200?logo=flyway)
+![Jsoup](https://img.shields.io/badge/Jsoup-1.17.2-ffcc00)
+
+<!-- Deployment / data -->
+[![Live API](https://img.shields.io/badge/API-live-1E90FF?logo=render)](https://newport-whale-api.onrender.com/)
+![Ingest](https://img.shields.io/badge/ingest-6%3A00%20PM%20America%2FLos_Angeles-8A2BE2)
+![Last commit](https://img.shields.io/github/last-commit/MansurTiyes/newport-whale-api)
 
 # Overview
 
