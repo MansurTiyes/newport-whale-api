@@ -228,7 +228,7 @@ A canonical catalog entry for an animal you may see in reports.
   Use this in filters: `?speciesId=humpback-whale`.
   For all possible `species-id`, please reference [Appendix B](#b-species-catalog).
 * `group` (*enum*) — one of: `whale | dolphin | shark | fish | other`.
-  For what each group entails, please reference **Appendix A**.
+  For what each group entails, please reference [Appendix A](#a-sightings-groups).
 * `commonName` (*string*) — e.g., “Humpback whale”.
 * `binomialName` (*string*) — scientific name.
 * `aliases` (*string\[]*) — alternative labels the scraper recognizes (e.g., “humpbacks”, “killer whale”).
@@ -572,7 +572,7 @@ This section is the contract for clients. It lists every public endpoint, parame
 
 Paging uses **Spring Page** format (see **Using API** section).
 
-For accepted enum/species values, see **Appendix — Catalogs**.
+For accepted enum/species values, see [Appendix — Catalogs](#appendix-catalogs-authoritative-lists).
 
 ## `GET /api/v1/species`
 
