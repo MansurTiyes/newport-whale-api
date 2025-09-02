@@ -1,3 +1,5 @@
+![Project banner](./docs/banner.png)
+
 <!-- Core project health -->
 [![Coverage](https://img.shields.io/badge/coverage-JaCoCo-informational)](#)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
